@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVF首次狭窄风险评分计算器（专业版）| AVF First Stricture Risk Score Calculator (Professional Edition)</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script> <!-- 导出Excel依赖 | Excel Export Dependency -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'Arial', sans-serif;
+        }
+        body {
+            background-color: #f0f5ff; /* 医疗蓝背景色 | Medical Blue Background */
+            padding: 20px;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+        .container {
+            background: white;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(22, 93, 255, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #165DFF; /* 医疗蓝主色 | Medical Blue Primary Color */
+            margin-bottom: 30px;
+            font-size: 26px;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+        .header-note {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 25px;
+            line-height: 1.8;
+        }
+        .input-group {
+            margin-bottom: 22px;
+            background-color: #f8fbff;
+            padding: 18px;
+            border-radius: 12px;
+            border-left: 4px solid #165DFF;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        label::before {
+            content: "●";
+            color: #165DFF;
+            margin-right: 8px;
+            font-size: 8px;
+        }
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 16px;
+            border: 1px solid #e1e7f5;
+            border-radius: 8px;
+            transition: all 0.3s;
+            background-color: white;
+        }
+        input[type="text"]:focus, input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: #165DFF;
+            box-shadow: 0 0 0 3px rgba(22, 93, 255, 0.1);
+        }
+        .form-row {
+            display: flex;
+            gap: 22px;
+            margin-bottom: 22px;
+        }
+        .form-col {
+            flex: 1;
+        }
+        /* 折叠面板样式（风险因素说明）| Collapsible Panel Style (Risk Factor Explanation) */
+        details {
+            margin-top: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: white;
+            border: 1px solid #e1e7f5;
+        }
+        summary {
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #165DFF;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        summary::after {
+            content: "▼";
+            font-size: 10px;
+            margin-left: 8px;
+            transition: transform 0.2s;
+        }
+        details[open] summary::after {
+            transform: rotate(180deg);
+        }
+        .detail-content {
+            padding: 0 15px 15px;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.8;
+        }
+        .detail-content .en {
+            color: #888;
+            margin-top: 5px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin: 30px 0 20px;
+        }
+        .btn-calculate, .btn-reset, .btn-export {
+            flex: 1;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn-calculate {
+            background-color: #165DFF;
+            color: white;
+        }
+        .btn-calculate:hover {
+            background-color: #0d47a1;
+        }
+        .btn-reset {
+            background-color: #f5f7fa;
+            color: #4a5568;
+            border: 1px solid #e1e7f5;
+        }
+        .btn-reset:hover {
+            background-color: #edf2f7;
+        }
+        .btn-export {
+            background-color: #36CFC9;
+            color: white;
+        }
+        .btn-export:hover {
+            background-color: #28b8b1;
+        }
+        .result-section {
+            margin-top: 35px;
+            padding: 30px;
+            background-color: #f8fbff;
+            border-radius: 16px;
+            border: 1px solid #e1e7f5;
+        }
+        .result-title {
+            font-size: 20px;
+            color: #165DFF;
+            margin-bottom: 25px;
+            font-weight: 600;
+            text-align: center;
+            position: relative;
+        }
+        .result-title::after {
+            content: "";
+            display: block;
+            width: 60px;
+            height: 3px;
+            background-color: #165DFF;
+            margin: 8px auto 0;
+            border-radius: 3px;
+        }
+        .result-card {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e1e7f5;
+        }
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        .result-label {
+            color: #4a5568;
+            font-size: 16px;
+            width: 35%;
+            display: flex;
+            align-items: center;
+        }
+        .result-label::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background-color: #e1e7f5;
+            margin: 0 10px;
+        }
+        .result-label .en {
+            font-size: 12px;
+            color: #888;
+            margin-left: 8px;
+            font-weight: normal;
+        }
+        .result-value {
+            color: #2d3748;
+            font-size: 18px;
+            font-weight: 600;
+            width: 65%;
+            text-align: right;
+        }
+        .risk-level {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .low-risk {
+            background-color: #e6f7ef;
+            color: #00b42a;
+        }
+        .medium-risk {
+            background-color: #fff7e6;
+            color: #ff7d00;
+        }
+        .high-risk {
+            background-color: #ffe8e8;
+            color: #f53f3f;
+        }
+        .error提示 {
+            color: #f53f3f;
+            font-size: 14px;
+            margin-top: 6px;
+            display: none;
+            margin-left: 2px;
+        }
+        .error提示 .en {
+            color: #ff6b6b;
+            font-size: 12px;
+            display: block;
+        }
+        .note {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #718096;
+            line-height: 1.8;
+        }
+        .note .en {
+            color: #888;
+            font-size: 12px;
+            display: block;
+            margin-top: 3px;
+        }
+        .export-count {
+            text-align: right;
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+        .export-count .en {
+            color: #888;
+            font-size: 11px;
+            display: block;
+        }
+        @media (max-width: 600px) {
+            .form-row {
+                flex-direction: column;
+                gap: 18px;
+            }
+            .container {
+                padding: 25px;
+            }
+            h1 {
+                font-size: 22px;
+            }
+            .btn-group {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .result-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            .result-value {
+                width: 100%;
+                text-align: left;
+            }
+            .result-label::after {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AVF首次狭窄风险评分计算器<br>AVF First Stricture Risk Score Calculator</h1>
+        <div class="header-note">
+            适用于血液透析患者动静脉内瘘狭窄风险评估 | For Hemodialysis Patients with Arteriovenous Fistula (AVF) Stricture Risk Assessment<br>
+            输入患者信息自动计算评分及发生率 | Auto-calculate Score and Stricture Rate by Entering Patient Information
+        </div>
+
+        <!-- 输入区域 | Input Section -->
+        <form id="scoreForm">
+            <!-- 基本信息 | Basic Information -->
+            <div class="form-row">
+                <div class="form-col input-group">
+                    <label for="patientName">患者姓名（Patient Name）*</label>
+                    <input type="text" id="patientName" placeholder="请输入患者姓名（如：张三）| Enter patient name (e.g., Zhang San)">
+                    <div class="error提示" id="nameError">请填写患者姓名 <span class="en">Please enter patient name</span></div>
+                </div>
+                <div class="form-col input-group">
+                    <label for="gender">性别（Gender）*</label>
+                    <select id="gender">
+                        <option value="">请选择 | Please select</option>
+                        <option value="男">男（Male）</option>
+                        <option value="女">女（Female）</option>
+                    </select>
+                    <div class="error提示" id="genderError">请选择性别 <span class="en">Please select gender</span></div>
+                </div>
+            </div>
+
+            <!-- 风险因素输入 | Risk Factor Input -->
+            <div class="input-group">
+                <label for="age">1. 年龄（Age，岁/y）*</label>
+                <input type="number" id="age" placeholder="如：55 | e.g., 55" step="any">
+                <div class="error提示" id="ageError">请输入有效年龄（1-120岁）<span class="en">Please enter valid age (1-120 years)</span></div>
+                <div class="note">
+                    评分规则：>54.72岁得1分，否则0分 | Scoring Rule: 1 point if >54.72 years, 0 points otherwise
+                </div>
+                <details>
+                    <summary>查看详细说明 | View Detailed Explanation</summary>
+                    <div class="detail-content">
+                        指标定义：患者当前实际年龄（精确到小数点后1位）<br>
+                        <span class="en">Definition: Patient's current actual age (accurate to 1 decimal place)</span><br>
+                        临床意义：年龄是血管功能的重要影响因素，高龄患者血管弹性下降、修复能力减弱，狭窄风险略高<br>
+                        <span class="en">Clinical Significance: Age is an important factor affecting vascular function. Elderly patients have decreased vascular elasticity and impaired repair capacity, leading to a slightly higher risk of stricture</span><br>
+                        评分依据：基于临床数据统计，54.72岁为风险分界点<br>
+                        <span class="en">Scoring Basis: Based on clinical data statistics, 54.72 years is the risk cutoff point</span>
+                    </div>
+                </details>
+            </div>
+
+            <div class="input-group">
+                <label for="fistulaDiameter">2. 瘘口直径（Fistula Diameter，cm）*</label>
+                <input type="number" id="fistulaDiameter" placeholder="如：0.45 | e.g., 0.45" step="0.01">
+                <div class="error提示" id="diameterError">请输入有效直径（>0且≤2.0cm）<span class="en">Please enter valid diameter (>0 and ≤2.0cm)</span></div>
+                <div class="note">
+                    评分规则：≤0.46cm得1分，否则0分（保护因素）| Scoring Rule: 1 point if ≤0.46cm, 0 points otherwise (Protective Factor)
+                </div>
+                <details>
+                    <summary>查看详细说明 | View Detailed Explanation</summary>
+                    <div class="detail-content">
+                        指标定义：动静脉内瘘吻合口处的实际测量直径（超声检测值）<br>
+                        <span class="en">Definition: Actual measured diameter at the anastomosis of arteriovenous fistula (ultrasound detection value)</span><br>
+                        临床意义：瘘口直径适中（>0.46cm）时，血流动力学更稳定，狭窄发生率降低<br>
+                        <span class="en">Clinical Significance: When the fistula diameter is moderate (>0.46cm), hemodynamics is more stable, and the incidence of stricture is reduced</span><br>
+                        测量建议：使用超声在吻合口1cm处垂直测量，精确到0.01cm<br>
+                        <span class="en">Measurement Suggestion: Use ultrasound to measure vertically 1cm from the anastomosis, accurate to 0.01cm</span>
+                    </div>
+                </details>
+            </div>
+
+            <div class="input-group">
+                <label for="surgeryTimes">3. 手术次数（Surgery Times）*</label>
+                <input type="number" id="surgeryTimes" placeholder="如：1.0 | e.g., 1.0" step="any">
+                <div class="error提示" id="surgeryError">请输入有效次数（≥0）<span class="en">Please enter valid number (≥0)</span></div>
+                <div class="note">
+                    评分规则：>0.998次得3分，否则0分（风险因素）| Scoring Rule: 3 points if >0.998 times, 0 points otherwise (Risk Factor)
+                </div>
+                <details>
+                    <summary>查看详细说明 | View Detailed Explanation</summary>
+                    <div class="detail-content">
+                        指标定义：患者既往接受的内瘘相关手术次数（含首次手术）<br>
+                        <span class="en">Definition: Number of previous fistula-related surgeries received by the patient (including the first surgery)</span><br>
+                        临床意义：多次手术会增加血管损伤、瘢痕组织形成风险，显著提高狭窄发生率<br>
+                        <span class="en">Clinical Significance: Multiple surgeries increase the risk of vascular injury and scar tissue formation, significantly increasing the incidence of stricture</span><br>
+                        评分依据：手术次数≥1次时，风险显著升高，故赋予3分权重<br>
+                        <span class="en">Scoring Basis: When the number of surgeries ≥1, the risk increases significantly, so a weight of 3 points is assigned</span>
+                    </div>
+                </details>
+            </div>
+
+            <div class="input-group">
+                <label for="noSurgery1y">4. 首次使用1年内未手术治疗（No Surgery Within 1 Year After First Use）*</label>
+                <select id="noSurgery1y">
+                    <option value="">请选择 | Please select</option>
+                    <option value="1">是（Yes）</option>
+                    <option value="0">否（No）</option>
+                </select>
+                <div class="error提示" id="noSurgeryError">请选择是否 <span class="en">Please select yes or no</span></div>
+                <div class="note">
+                    评分规则：是得6分，否则0分（保护因素）| Scoring Rule: 6 points for yes, 0 points for no (Protective Factor)
+                </div>
+                <details>
+                    <summary>查看详细说明 | View Detailed Explanation</summary>
+                    <div class="detail-content">
+                        指标定义：内瘘首次投入使用后，1年内未因狭窄、血栓等并发症接受手术干预<br>
+                        <span class="en">Definition: No surgical intervention for complications such as stricture and thrombosis within 1 year after the first use of the fistula</span><br>
+                        临床意义：1年内无手术史表明内瘘初始功能良好，长期通畅性更优<br>
+                        <span class="en">Clinical Significance: No surgical history within 1 year indicates good initial function of the fistula and better long-term patency</span><br>
+                        评分依据：该指标是保护因素中权重最高项，反映内瘘基础质量<br>
+                        <span class="en">Scoring Basis: This indicator is the highest weighted protective factor, reflecting the basic quality of the fistula</span>
+                    </div>
+                </details>
+            </div>
+
+            <div class="input-group">
+                <label for="multiDisease">5. 多种基础疾病（≥2种）（Multiple Comorbidities [≥2 Types]）*</label>
+                <select id="multiDisease">
+                    <option value="">请选择 | Please select</option>
+                    <option value="1">是（Yes）</option>
+                    <option value="0">否（No）</option>
+                </select>
+                <div class="error提示" id="diseaseError">请选择是否 <span class="en">Please select yes or no</span></div>
+                <div class="note">
+                    评分规则：是得3分，否则0分（风险因素）| Scoring Rule: 3 points for yes, 0 points for no (Risk Factor)
+                </div>
+                <details>
+                    <summary>查看详细说明 | View Detailed Explanation</summary>
+                    <div class="detail-content">
+                        指标定义：同时患有糖尿病、高血压、冠心病、高脂血症等基础疾病中的2种及以上<br>
+                        <span class="en">Definition: Simultaneously suffering from 2 or more of the following comorbidities: diabetes mellitus, hypertension, coronary heart disease, hyperlipidemia, etc.</span><br>
+                        临床意义：多种基础疾病协同损害血管内皮功能，加速动脉粥样硬化，升高狭窄风险<br>
+                        <span class="en">Clinical Significance: Multiple comorbidities synergistically damage vascular endothelial function, accelerate atherosclerosis, and increase the risk of stricture</span><br>
+                        统计依据：合并2种以上基础疾病患者的狭窄发生率是单一疾病患者的2.3倍<br>
+                        <span class="en">Statistical Basis: The incidence of stricture in patients with ≥2 comorbidities is 2.3 times that of patients with a single disease</span>
+                    </div>
+                </details>
+            </div>
+
+            <div class="input-group">
+                <label for="pth">6. 甲状旁腺激素（Parathyroid Hormone, PTH，pg/mL）*</label>
+                <input type="number" id="pth" placeholder="如：18.2 | e.g., 18.2" step="any">
+                <div class="error提示" id="pthError">请输入有效数值（≥0）<span class="en">Please enter valid value (≥0)</span></div>
+                <div class="note">
+                    评分规则：>16.53pg/mL得1分，否则0分（风险因素）| Scoring Rule: 1 point if >16.53pg/mL, 0 points otherwise (Risk Factor)
+                </div>
+                <details>
+                    <summary>查看详细说明 | View Detailed Explanation</summary>
+                    <div class="detail-content">
+                        指标定义：血液中甲状旁腺激素的检测值（空腹静脉血检测）<br>
+                        <span class="en">Definition: Detected value of parathyroid hormone in blood (fasting venous blood test)</span><br>
+                        临床意义：PTH升高会导致血管钙化、纤维化，损害内瘘血管壁结构<br>
+                        <span class="en">Clinical Significance: Elevated PTH leads to vascular calcification and fibrosis, damaging the fistula vessel wall structure</span><br>
+                        正常范围：15-65pg/mL，超过16.53pg/mL时狭窄风险开始上升<br>
+                        <span class="en">Normal Range: 15-65pg/mL, the risk of stricture begins to increase when exceeding 16.53pg/mL</span>
+                    </div>
+                </details>
+            </div>
+
+            <!-- 导出计数提示 | Export Count Prompt -->
+            <div class="export-count">
+                当前已记录 <span id="recordCount">0</span> 条评分结果 | <span class="en">Total <span id="recordCountEn">0</span> score records saved</span>
+            </div>
+
+            <!-- 按钮组 | Button Group -->
+            <div class="btn-group">
+                <button type="button" class="btn-calculate" onclick="calculateScore()">计算风险评分（Calculate Risk Score）</button>
+                <button type="button" class="btn-reset" onclick="resetForm()">重置输入（Reset Input）</button>
+                <button type="button" class="btn-export" onclick="exportRecords()">导出评分记录（Export Score Records）</button>
+            </div>
+        </form>
+
+        <!-- 结果显示区域 | Result Display Section -->
+        <div class="result-section" style="display: none;">
+            <div class="result-title">评分结果（Score Result）</div>
+            <div class="result-card">
+                <div class="result-item">
+                    <span class="result-label">患者姓名 <span class="en">Patient Name</span>：</span>
+                    <span class="result-value" id="resultName">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">性别 <span class="en">Gender</span>：</span>
+                    <span class="result-value" id="resultGender">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">总评分 <span class="en">Total Score</span>：</span>
+                    <span class="result-value" id="totalScore">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">风险等级 <span class="en">Risk Level</span>：</span>
+                    <span class="result-value">
+                        <span class="risk-level" id="riskLevel">-</span>
+                    </span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">狭窄发生率 <span class="en">Stricture Rate</span>：</span>
+                    <span class="result-value" id="strictureRate">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">评估时间 <span class="en">Evaluation Time</span>：</span>
+                    <span class="result-value" id="evaluateTime">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 存储评分记录（用于导出）| Store score records (for export)
+        let scoreRecords = [];
+
+        // 评分计算核心函数 | Core score calculation function
+        function calculateScore() {
+            // 1. 获取输入值 | Get input values
+            const patientName = document.getElementById('patientName').value.trim();
+            const gender = document.getElementById('gender').value;
+            const age = parseFloat(document.getElementById('age').value);
+            const fistulaDiameter = parseFloat(document.getElementById('fistulaDiameter').value);
+            const surgeryTimes = parseFloat(document.getElementById('surgeryTimes').value);
+            const noSurgery1y = parseInt(document.getElementById('noSurgery1y').value);
+            const multiDisease = parseInt(document.getElementById('multiDisease').value);
+            const pth = parseFloat(document.getElementById('pth').value);
+
+            // 2. 验证输入 | Validate input
+            let isValid = true;
+            if (!patientName) { showError('nameError'); isValid = false; } else { hideError('nameError'); }
+            if (!gender) { showError('genderError'); isValid = false; } else { hideError('genderError'); }
+            if (isNaN(age) || age <= 0 || age > 120) { showError('ageError'); isValid = false; } else { hideError('ageError'); }
+            if (isNaN(fistulaDiameter) || fistulaDiameter <= 0 || fistulaDiameter > 2.0) { showError('diameterError'); isValid = false; } else { hideError('diameterError'); }
+            if (isNaN(surgeryTimes) || surgeryTimes < 0) { showError('surgeryError'); isValid = false; } else { hideError('surgeryError'); }
+            if (isNaN(noSurgery1y)) { showError('noSurgeryError'); isValid = false; } else { hideError('noSurgeryError'); }
+            if (isNaN(multiDisease)) { showError('diseaseError'); isValid = false; } else { hideError('diseaseError'); }
+            if (isNaN(pth) || pth < 0) { showError('pthError'); isValid = false; } else { hideError('pthError'); }
+
+            // 3. 验证失败则返回 | Return if validation fails
+            if (!isValid) return;
+
+            // 4. 计算各项得分 | Calculate scores for each item
+            let score = 0;
+            if (age > 54.72) score += 1;
+            if (fistulaDiameter <= 0.46) score += 1;
+            if (surgeryTimes > 0.998) score += 3;
+            if (noSurgery1y === 1) score += 6;
+            if (multiDisease === 1) score += 3;
+            if (pth > 16.53) score += 1;
+
+            // 5. 判定风险等级和狭窄发生率 | Determine risk level and stricture rate
+            let riskLevel, riskLevelEn, strictureRate, riskClass;
+            if (score <= 5) {
+                riskLevel = "低危组";
+                riskLevelEn = "Low-Risk Group";
+                strictureRate = "12.0%";
+                riskClass = "low-risk";
+            } else if (score <= 10) {
+                riskLevel = "中危组";
+                riskLevelEn = "Medium-Risk Group";
+                strictureRate = "32.9%";
+                riskClass = "medium-risk";
+            } else {
+                riskLevel = "高危组";
+                riskLevelEn = "High-Risk Group";
+                strictureRate = "43.3%";
+                riskClass = "high-risk";
+            }
+
+            // 6. 获取当前时间 | Get current time
+            const evaluateTime = new Date().toLocaleString('zh-CN', { 
+                year: 'numeric', month: '2-digit', day: '2-digit', 
+                hour: '2-digit', minute: '2-digit', second: '2-digit' 
+            });
+            const evaluateTimeEn = new Date().toLocaleString('en-US', {
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit',
+                hour12: false
+            });
+
+            // 7. 显示结果 | Display results
+            document.querySelector('.result-section').style.display = 'block';
+            document.getElementById('resultName').textContent = patientName;
+            document.getElementById('resultGender').textContent = gender === '男' ? '男（Male）' : '女（Female）';
+            document.getElementById('totalScore').textContent = `${score} 分（满分15分）| ${score} / 15 Points`;
+            const riskLevelElem = document.getElementById('riskLevel');
+            riskLevelElem.textContent = `${riskLevel}（${riskLevelEn}）`;
+            riskLevelElem.className = `risk-level ${riskClass}`;
+            document.getElementById('strictureRate').textContent = strictureRate;
+            document.getElementById('evaluateTime').textContent = `${evaluateTime} | ${evaluateTimeEn}`;
+
+            // 8. 保存记录到数组（中英对照）| Save record to array (Chinese-English对照)
+            const record = {
+                "患者姓名（Patient Name）": patientName,
+                "性别（Gender）": gender === '男' ? '男（Male）' : '女（Female）',
+                "年龄（Age, y）": age.toFixed(1) + " 岁",
+                "瘘口直径（Fistula Diameter, cm）": fistulaDiameter.toFixed(2) + " cm",
+                "手术次数（Surgery Times）": surgeryTimes.toFixed(1) + " 次",
+                "1年内未手术（No Surgery Within 1y）": noSurgery1y === 1 ? "是（Yes）" : "否（No）",
+                "多种基础疾病（Multiple Comorbidities）": multiDisease === 1 ? "是（Yes）" : "否（No）",
+                "PTH值（PTH, pg/mL）": pth.toFixed(1) + " pg/mL",
+                "总评分（Total Score）": score + " 分",
+                "风险等级（Risk Level）": `${riskLevel}（${riskLevelEn}）`,
+                "狭窄发生率（Stricture Rate）": strictureRate,
+                "评估时间（Evaluation Time）": `${evaluateTime} | ${evaluateTimeEn}`
+            };
+            scoreRecords.push(record);
+            document.getElementById('recordCount').textContent = scoreRecords.length;
+            document.getElementById('recordCountEn').textContent = scoreRecords.length;
+        }
+
+        // 导出Excel功能 | Excel Export Function
+        function exportRecords() {
+            if (scoreRecords.length === 0) {
+                alert("暂无评分记录可导出，请先计算患者评分 | No score records to export, please calculate patient scores first");
+                return;
+            }
+
+            // 创建工作簿和工作表 | Create workbook and worksheet
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.json_to_sheet(scoreRecords);
+
+            // 调整列宽 | Adjust column width
+            const wscols = [
+                {wch: 20}, {wch: 15}, {wch: 12}, {wch: 22}, {wch: 18},
+                {wch: 25}, {wch: 25}, {wch: 18}, {wch: 15}, {wch: 25}, {wch: 18}, {wch: 40}
+            ];
+            worksheet['!cols'] = wscols;
+
+            // 添加工作表到工作簿 | Add worksheet to workbook
+            XLSX.utils.book_append_sheet(workbook, worksheet, "AVF狭窄评分记录 | AVF Stricture Score Records");
+
+            // 导出文件（文件名含日期）| Export file (filename with date)
+            const today = new Date().toLocaleDateString('zh-CN').replace(/\//g, '-');
+            const todayEn = new Date().toLocaleDateString('en-US').replace(/\//g, '-');
+            XLSX.writeFile(workbook, `AVF狭窄评分记录_${today}_${todayEn}.xlsx`);
+        }
+
+        // 错误提示显示/隐藏函数 | Error prompt show/hide function
+        function showError(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+        function hideError(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // 重置表单函数 | Reset form function
+        function resetForm() {
+            document.getElementById('scoreForm').reset();
+            document.querySelector('.result-section').style.display = 'none';
+            const errors = document.querySelectorAll('.error提示');
+            errors.forEach(error => error.style.display = 'none');
+        }
+    </script>
+</body>
+</html>
