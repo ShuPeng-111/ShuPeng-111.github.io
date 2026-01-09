@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AVF首次狭窄风险评分计算器（专业版）| AVF First Stricture Risk Score Calculator (Professional Edition)</title>
-    <!-- 内联xlsx核心代码（无需外部CDN，彻底解决拦截问题） -->
-    <script>
-        !(function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define(t):(e="undefined"!=typeof globalThis?globalThis:e||self).XLSX=t()})(this,(function(){"use strict";var e="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};function t(e,t){var n=Object.keys(e);if(Object.getOwnPropertySymbols){var r=Object.getOwnPropertySymbols(e);t&&(r=r.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),n.push.apply(n,r)}return n}function n(e){for(var n=1;n<arguments.length;n++){var r=null!=arguments[n]?arguments[n]:{};n%2?t(Object(r),!0).forEach((function(t){o(e,t,r[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(r)):t(Object(r)).forEach((function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(r,t))}))}return e}function r(e,t){return function(e){if(Array.isArray(e))return e}(e)||function(e,t){var n=null==e?null:"undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(null!=n){var r,o,i=[],a=n.call(e);try{for(;(void 0===t||t-- >0)&&!(r=a.next()).done;)i.push(r.value)}catch(e){o={error:e}}finally{try{null!=r&&!r.done&&null!=a.return&&a.return()}finally{if(o)throw o.error}}return i}}(e,t)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function o(e,t,n){return t in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function i(e){return i="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},i(e)}function a(e){return Array.isArray(e)}function u(e){return"[object Uint8Array]"===Object.prototype.toString.call(e)}function c(e){return"string"==typeof e}function l(e){return null!=e&&"object"===i(e)}function s(e){return l(e)&&"[object ArrayBuffer]"===Object.prototype.toString.call(e)}function f(e){return l(e)&&!!e.byteLength&&(u(e)||s(e)||!!e.buffer)}function d(e){if(u(e))return e;if(s(e))return new Uint8Array(e);if("string"==typeof e){var t=unescape(encodeURIComponent(e)),n=new Uint8Array(t.length);for(var r=0;r<t.length;r++)n[r]=t.charCodeAt(r);return n}throw new Error("unsupported input");}function p(e){for(var t=[],n=0;n<e.length;n++)t.push(String.fromCharCode(e[n]));return decodeURIComponent(escape(t.join("")))}function h(e){return e.reduce((function(e,t){return e*256+t}),0)}function g(e,t){var n=e.slice(t,t+4);return h(n)}function m(e){return e.length>=4&&0x504b0304===g(e,0)}function v(e){if(!m(e))return null;var t={},n=e.length,r=0;for(;r<n;){if(r+4>n)return t;var o=g(e,r);if(0x504b0304===o)r+=4;else{if(0x504b0506!==o)break;return t}var i=g(e,r+28),a=g(e,r+32),u=g(e,r+20),c=g(e,r+16),l=g(e,r+12),s=g(e,r+8),f=g(e,r+4),d=p(e.slice(r+30,r+30+l));r+=30+l;var h={name:d,dir:!!(c&16),hidden:!!(c&2),created:new Date(1980+(f>>25),(f>>21)&15,(f>>16)&31,(f>>11)&31,(f>>5)&63,(f&31)*2),modified:new Date(1980+(u>>25),(u>>21)&15,(u>>16)&31,(u>>11)&31,(u>>5)&63,(u&31)*2),offset:r,compression:c&6,size:a,csize:i};if(h.dir)r+=i;else{var m=e.slice(r,r+i);r+=i,t[d]=h,t[d].data=m}}return t}function b(e){if(!l(e))return null;var t=e["[Content_Types].xml"],n=e._rels&&e._rels[".rels"],r={};if(t){var o=/<Override\s+PartName="([^"]+)"\s+ContentType="([^"]+)"/g,i;while(i=o.exec(t))r[i[1]]=i[2]}if(n){var a=/<Relationship\s+Id="([^"]+)"\s+Type="([^"]+)"\s+Target="([^"]+)"/g,u;while(u=a.exec(n))if("http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"===u[2]){var c=u[3];if(c[0]!="/")c="/"+c;if(e[c])return e[c]}}}function y(e){var t=v(d(e));if(!t)return null;var n=b(t);return n?n.data:null}function w(e){if(!l(e))return"";var t=[];for(var n in e)t.push(n);return t.sort().map((function(t){return"["+t+"]: "+(e[t].dir?"dir":"file "+e[t].size+" bytes")})).join("\n")}function E(e){return e.reduce((function(e,t){return e*256+t}),0)}function x(e,t){var n=new Uint8Array(4);for(n[0]=t>>24,n[1]=(t>>16)&255,n[2]=(t>>8)&255,n[3]=t&255,e.push.apply(e,n),e),n}function O(e,t){var n=t.length,r=new Uint8Array(n+4);r.set(t,0);for(var o=0;o<4;o++)r[n+o]=e.charCodeAt(o);return r}function A(e){var t=[];for(var n=0;n<e.length;n++)t.push(e.charCodeAt(n));return new Uint8Array(t)}function S(e,t){var n=A(t),r=new Uint8Array(e.length+n.length);r.set(e,0),r.set(n,e.length);return r}function T(e){var t=[];for(var n=0;n<e.length;n++)x(t,e.charCodeAt(n));return new Uint8Array(t)}function C(e){var t=e.length,n=Math.ceil(t/4),r=new Uint8Array(n*4);r.set(e,0);for(var o=0;o<n*4;o++)if(o>=t)r[o]=0;return r}function L(e){var t=[];for(var n=0;n<e.length;n+=4){var r=e[n]<<24|e[n+1]<<16|e[n+2]<<8|e[n+3];t.push(String.fromCharCode(r>>24,(r>>16)&255,(r>>8)&255,r&255))}return t.join("")}function k(e){var t=[];for(var n=0;n<e.length;n++)t.push(e.charCodeAt(n)&255);return new Uint8Array(t)}function M(e){return e.reduce((function(e,t,n){return e+(t<<(24-8*(n%4)))})),0}function D(e){var t=e.length,n=[];for(var r=0;r<t;r+=4){var o=e[r]<<24|(r+1<t?e[r+1]:0)<<16|(r+2<t?e[r+2]:0)<<8|(r+3<t?e[r+3]:0);n.push(o)}return n}function F(e){return e.map((function(e){return[e>>24&255,e>>16&255,e>>8&255,e&255]})).flat()}function B(e){var t=[];for(var n=0;n<e.length;n++)t.push(e[n]&255);return new Uint8Array(t)}function N(e){return e.reduce((function(e,t){return e*65536+t}),0)}function P(e){var t=[];for(var n=0;n<e.length;n++)t.push(e.charCodeAt(n));return t}function H(e){return String.fromCharCode.apply(null,e)}function j(e){var t=[];for(var n=0;n<e.length;n++)t.push(e[n]&255);return t}function q(e){return e.reduce((function(e,t){return e*256+t}),0)}function U(e){var t=[];for(var n=0;n<e.length;n++)t.push(e.charCodeAt(n));return new Uint8Array(t)}function z(e){return e.reduce((function(e,t,n){return e+(t<<(8*(n%2)))})),0}function G(e){var t=[];for(var n=0;n<e.length;n+=2){var r=e[n]<<8|(n+1<e.length?e[n+1]:0);t.push(r)}return t}function I(e){return e.map((function(e){return[e>>8&255,e&255]})).flat()}function J(e){var t=[];for(var n=0;n<e.length;n++)t.push(e[n]&255);return t}function K(e){return e.reduce((function(e,t){return e*256+t}),0)}function Q(e){var t=[];for(var n=0;n<e.length;n++)t.push(e.charCodeAt(n));return t}function R(e){return String.fromCharCode.apply(null,e)}function V(e){var t=[];for(var n=0;n<e.length;n++)t.push(e[n]&255);return t}function W(e){return e.reduce((function(e,t){return e*256+t}),0)}function X(e){var t=[];for(var n=0;n<e.length;n++)t.push(e.charCodeAt(n));return new Uint8Array(t)}function Y(e){return e.reduce((function(e,t,n){return e+(t<<(8*(n%2)))})),0}function Z(e){var t=[];for(var n=0;n<e.length;n+=2){var r=e[n]<<8|(n+1<e.length?e[n+1]:0);t.push(r)}return t}function $e(e){return e.map((function(e){return[e>>8&255,e&255]})).flat()}function _e(e){var t=[];for(var n=0;n<e.length;n++)t.push(e[n]&255);return t}function ae(e){return e.reduce((function(e,t){return e*256+t}),0)}function te(e){var t=[];for(var n=0;n<e.length;n++)t.push(e.charCodeAt(n));return t}function ne(e){return String.fromCharCode.apply(null,e)}function re(e){var t=[];for(var n=0;n<e.length;n++)t.push(e[n]&255);return t}function oe(e){return e.reduce((function(e,t){return e*256+t}),0)}function ie(e){var t=[];for(var n=0;n<e.length;n++)t.push(e.charCodeAt(n));return new Uint8Array(t)}function ae(e){return e.reduce((function(e,t,n){return e+(t<<(8*(n%2)))})),0}function ue(e){var t=[];for(var n=0;n<e.length;n+=2){var r=e[n]<<8|(n+1<e.length?e[n+1]:0);t.push(r)}return t}function ce(e){return e.map((function(e){return[e>>8&255,e&255]})).flat()}function le(e){var t=[];for(var n=0;n<e.length;n++)t.push(e[n]&255);return t}function se(e,t){var n=t||{};if(!l(e))throw new Error("invalid workbook");var r=[];for(var o in e.Sheets)if(e.Sheets.hasOwnProperty(o)){var i=e.Sheets[o];if(!l(i))continue;var a=[];for(var u in i)if(i.hasOwnProperty(u)&&u[0]!="!"){var c=u.match(/^([A-Z]+)(\d+)$/);if(!c)continue;var s=c[1],f=c[2];a.push({address:u,row:parseInt(f,10)-1,col:XLSX.utils.decode_col(s),value:i[u]});}a.sort((function(e,t){return e.row-t.row||e.col-t.col}));var d={name:o,data:a};r.push(d);}return r;}var XLSX={version:"0.19.3",utils:{sheet_to_json:function(e,t){var n=t||{};if(!l(e))return[];var r=[];var o=n.header||"A";var i=n.range;if("number"==typeof i)i={s:{r:i,c:0},e:{r:1048575,c:16383}};else if(a(i))i={s:{r:i[0],c:i[1]},e:{r:i[2],c:i[3]}};else if(!l(i))i={s:{r:0,c:0},e:{r:1048575,c:16383}};var u=i.s,r=i.e;var c={};for(var l in e)if(e.hasOwnProperty(l)&&l[0]!="!"){var s=l.match(/^([A-Z]+)(\d+)$/);if(!s)continue;var f=s[1],d=s[2];var p=parseInt(d,10)-1,h=XLSX.utils.decode_col(f);if(p<u.r||p>r.r||h<u.c||h>r.c)continue;if(!c[p])c[p]={};c[p][h]=e[l];}var g=Object.keys(c).map(Number).sort((function(e,t){return e-t}));for(var m=0;m<g.length;m++){var v=g[m];var b=c[v];if("array"===o){var y=[];for(var w=u.c;w<=r.c;w++)y.push(b[w]?XLSX.utils.format_cell(b[w]):"");r.push(y);}else if("object"===o||!o){var E={};for(var x in b)if(b.hasOwnProperty(x)){var O=XLSX.utils.encode_col(x);E[O]=XLSX.utils.format_cell(b[x]);}r.push(E);}else if(a(o)){var A={};for(var S=0;S<o.length;S++){var T=o[S];var C=XLSX.utils.encode_col(u.c+S);var L=b[u.c+S];A[T]=L?XLSX.utils.format_cell(L):"";}r.push(A);}else{var k={};for(var M in b)if(b.hasOwnProperty(M)){var D=XLSX.utils.encode_col(M);k[D]=XLSX.utils.format_cell(b[M]);}r.push(k);}}return r;},json_to_sheet:function(e,t){var n=t||{};if(!a(e))return{};var r={};var o=[];var i=[];for(var u=0;u<e.length;u++){var c=e[u];if(l(c)){for(var s in c)if(c.hasOwnProperty(s)&&!o.includes(s))o.push(s);}}o.sort();for(var f=0;f<e.length;f++){var d=e[f];for(var p=0;p<o.length;p++){var h=o[p];var g=XLSX.utils.encode_cell({r:f,c:p});r[g]=l(d)&&d.hasOwnProperty(h)?XLSX.utils.cell(d[h]):{t:"s",v:""};}}r["!ref"]=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:e.length-1,c:o.length-1}});return r;},decode_col:function(e){var t=0;for(var n=0;n<e.length;n++)t=t*26+(e.charCodeAt(n)-65+1);return t-1;},encode_col:function(e){var t="";while(e>=0){t=String.fromCharCode(65+e%26)+t;e=Math.floor(e/26)-1;}return t;},encode_cell:function(e){return XLSX.utils.encode_col(e.c)+(e.r+1);},format_cell:function(e){if(!l(e))return e;if(e.t)switch(e.t){case"s":return e.v||"";case'n':return e.v||0;case'b':return e.v||false;case'd':return e.v?new Date(e.v):null;default:return e.v||"";}return e.v||"";},cell:function(e){var t={};if(null==e)return{t:"s",v:""};switch(typeof e){case"string":t={t:"s",v:e};break;case"number":t={t:"n",v:e};break;case"boolean":t={t:"b",v:e};break;case"object":if(e instanceof Date){t={t:"d",v:e};break;}else{t={t:"s",v:JSON.stringify(e)};break;}default:t={t:"s",v:String(e)};}return t;},encode_range:function(e){var t=XLSX.utils.encode_cell(e.s),n=XLSX.utils.encode_cell(e.e);return t===n?t:t+":"+n;}},read:function(e,t){var n=t||{};if(c(e))e=d(e);if(!u(e))throw new Error("unsupported input");if(m(e)){var r=v(e);var o=b(r);if(o)return{SheetNames:Object.keys(r).filter((function(e){return!r[e].dir})).map((function(e){return e.replace(/\//g,"")})),Sheets:se({Sheets:{"Sheet1":{}}})};}return{SheetNames:["Sheet1"],Sheets:{"Sheet1":{}}};},write:function(e,t){var n=t||{};var r=[];var o=n.type||"binary";var i=e.SheetNames[0];var a=e.Sheets[i];var u=[];for(var c in a)if(a.hasOwnProperty(c)&&c[0]!="!")u.push(c);u.sort();var l=U("PK\x03\x04");var s=U("\x14\x00\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00");var f=U("Sheet1.xml");var d=U("\x00\x00\x00\x00\x00\x00\x00\x00");var p=U("PK\x05\x06\x00\x00\x00\x00\x01\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00");r=S(S(S(S(S(l,s),f),d),a["!ref"]?U(a["!ref"]):U("A1")),p);if("array"===o)return B(r);if("blob"===o)return new Blob([r],{type:"application/octet-stream"});if("binary"===o)return H(j(r));throw new Error("unsupported output type");},writeFile:function(e,t){var n=XLSX.write(e,{type:"blob",bookType:"xlsx"});var r=document.createElement("a");r.href=URL.createObjectURL(n);r.download=t||"sheetjs.xlsx";r.click();URL.revokeObjectURL(r.href);}};return XLSX;}));
-    </script>
     <style>
         * {
             margin: 0;
@@ -612,7 +608,7 @@
             document.getElementById('recordCountEn').textContent = scoreRecords.length;
         }
 
-        // 优化后的导出Excel功能（兼容GitHub Pages，无外部依赖）| Optimized Excel Export Function
+        // 原生CSV导出功能（无任何外部依赖，100%稳定）| Native CSV Export Function (No Dependencies)
         function exportRecords() {
             // 1. 验证是否有评分记录
             if (scoreRecords.length === 0) {
@@ -620,41 +616,32 @@
                 return;
             }
 
-            // 2. 验证XLSX对象是否存在（内联代码确保存在）
-            if (typeof XLSX === 'undefined') {
-                alert("Excel导出库初始化失败，请刷新页面重试 | Excel export library initialization failed, please refresh the page and try again");
-                return;
-            }
-
             try {
-                // 3. 创建工作簿和工作表
-                const workbook = XLSX.utils.book_new();
-                const worksheet = XLSX.utils.json_to_sheet(scoreRecords);
+                // 2. 生成CSV表头
+                const headers = Object.keys(scoreRecords[0]);
+                // 3. 生成CSV内容（处理中文和特殊字符）
+                const csvContent = [
+                    headers.join(","), // 表头
+                    ...scoreRecords.map(row => headers.map(key => `"${(row[key] || "").replace(/"/g, '""')}"`).join(",")) // 数据行（转义双引号）
+                ].join("\n");
 
-                // 4. 调整列宽（优化Excel显示效果）
-                const wscols = [
-                    {wch: 20}, {wch: 15}, {wch: 12}, {wch: 22}, {wch: 18},
-                    {wch: 25}, {wch: 25}, {wch: 18}, {wch: 15}, {wch: 25}, {wch: 18}, {wch: 40}
-                ];
-                worksheet['!cols'] = wscols;
-
-                // 5. 添加工作表到工作簿
-                XLSX.utils.book_append_sheet(workbook, worksheet, "AVF狭窄评分记录");
-
-                // 6. 生成并下载Excel文件（兼容所有浏览器）
+                // 4. 创建Blob并下载
+                const blob = new Blob([`\ufeff${csvContent}`], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
                 const today = new Date().toLocaleDateString('zh-CN').replace(/\//g, '-');
-                const fileName = `AVF狭窄评分记录_${today}.xlsx`;
-                XLSX.writeFile(workbook, fileName);
+                a.download = `AVF狭窄评分记录_${today}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
 
-                // 7. 导出成功提示
-                setTimeout(() => {
-                    alert(`评分记录已成功导出为：${fileName} | Score records have been successfully exported as: ${fileName}`);
-                }, 500);
-
+                // 5. 导出成功提示
+                alert(`评分记录已成功导出为CSV文件（可直接用Excel打开）| Score records exported as CSV (open with Excel)`);
             } catch (error) {
-                // 捕获异常并提示用户
-                console.error("导出失败详细信息：", error);
-                alert("导出失败，请尝试刷新页面后重试 | Export failed, please refresh the page and try again");
+                console.error("导出失败：", error);
+                alert("导出失败，请重试 | Export failed, please try again");
             }
         }
 
