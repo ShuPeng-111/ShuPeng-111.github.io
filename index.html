@@ -239,14 +239,15 @@
             background-color: #ffe8e8;
             color: #f53f3f;
         }
-        .error提示 {
+        /* 修复：中文类名改为英文，避免浏览器解析错误 */
+        .error-tip {
             color: #f53f3f;
             font-size: 14px;
             margin-top: 6px;
             display: none;
             margin-left: 2px;
         }
-        .error提示 .en {
+        .error-tip .en {
             color: #ff6b6b;
             font-size: 12px;
             display: block;
@@ -319,7 +320,8 @@
                 <div class="form-col input-group">
                     <label for="patientName">患者姓名（Patient Name）*</label>
                     <input type="text" id="patientName" placeholder="请输入患者姓名（如：张三）| Enter patient name (e.g., Zhang San)">
-                    <div class="error提示" id="nameError">请填写患者姓名 <span class="en">Please enter patient name</span></div>
+                    <!-- 修复：类名改为error-tip -->
+                    <div class="error-tip" id="nameError">请填写患者姓名 <span class="en">Please enter patient name</span></div>
                 </div>
                 <div class="form-col input-group">
                     <label for="gender">性别（Gender）*</label>
@@ -328,7 +330,8 @@
                         <option value="男">男（Male）</option>
                         <option value="女">女（Female）</option>
                     </select>
-                    <div class="error提示" id="genderError">请选择性别 <span class="en">Please select gender</span></div>
+                    <!-- 修复：类名改为error-tip -->
+                    <div class="error-tip" id="genderError">请选择性别 <span class="en">Please select gender</span></div>
                 </div>
             </div>
 
@@ -336,7 +339,8 @@
             <div class="input-group">
                 <label for="age">1. 年龄（Age，岁/y）*</label>
                 <input type="number" id="age" placeholder="如：55 | e.g., 55" step="any">
-                <div class="error提示" id="ageError">请输入有效年龄（1-120岁）<span class="en">Please enter valid age (1-120 years)</span></div>
+                <!-- 修复：类名改为error-tip -->
+                <div class="error-tip" id="ageError">请输入有效年龄（1-120岁）<span class="en">Please enter valid age (1-120 years)</span></div>
                 <div class="note">
                     评分规则：>54.72岁得1分，否则0分 | Scoring Rule: 1 point if >54.72 years, 0 points otherwise
                 </div>
@@ -356,7 +360,8 @@
             <div class="input-group">
                 <label for="fistulaDiameter">2. 瘘口直径（Fistula Diameter，cm）*</label>
                 <input type="number" id="fistulaDiameter" placeholder="如：0.45 | e.g., 0.45" step="0.01">
-                <div class="error提示" id="diameterError">请输入有效直径（>0且≤2.0cm）<span class="en">Please enter valid diameter (>0 and ≤2.0cm)</span></div>
+                <!-- 修复：类名改为error-tip -->
+                <div class="error-tip" id="diameterError">请输入有效直径（>0且≤2.0cm）<span class="en">Please enter valid diameter (>0 and ≤2.0cm)</span></div>
                 <div class="note">
                     评分规则：≤0.46cm得1分，否则0分（保护因素）| Scoring Rule: 1 point if ≤0.46cm, 0 points otherwise (Protective Factor)
                 </div>
@@ -376,7 +381,8 @@
             <div class="input-group">
                 <label for="surgeryTimes">3. 手术次数（Surgery Times）*</label>
                 <input type="number" id="surgeryTimes" placeholder="如：1.0 | e.g., 1.0" step="any">
-                <div class="error提示" id="surgeryError">请输入有效次数（≥0）<span class="en">Please enter valid number (≥0)</span></div>
+                <!-- 修复：类名改为error-tip -->
+                <div class="error-tip" id="surgeryError">请输入有效次数（≥0）<span class="en">Please enter valid number (≥0)</span></div>
                 <div class="note">
                     评分规则：>0.998次得3分，否则0分（风险因素）| Scoring Rule: 3 points if >0.998 times, 0 points otherwise (Risk Factor)
                 </div>
@@ -400,7 +406,8 @@
                     <option value="1">是（Yes）</option>
                     <option value="0">否（No）</option>
                 </select>
-                <div class="error提示" id="noSurgeryError">请选择是否 <span class="en">Please select yes or no</span></div>
+                <!-- 修复：类名改为error-tip -->
+                <div class="error-tip" id="noSurgeryError">请选择是否 <span class="en">Please select yes or no</span></div>
                 <div class="note">
                     评分规则：是得6分，否则0分（保护因素）| Scoring Rule: 6 points for yes, 0 points for no (Protective Factor)
                 </div>
@@ -424,7 +431,8 @@
                     <option value="1">是（Yes）</option>
                     <option value="0">否（No）</option>
                 </select>
-                <div class="error提示" id="diseaseError">请选择是否 <span class="en">Please select yes or no</span></div>
+                <!-- 修复：类名改为error-tip -->
+                <div class="error-tip" id="diseaseError">请选择是否 <span class="en">Please select yes or no</span></div>
                 <div class="note">
                     评分规则：是得3分，否则0分（风险因素）| Scoring Rule: 3 points for yes, 0 points for no (Risk Factor)
                 </div>
@@ -444,7 +452,8 @@
             <div class="input-group">
                 <label for="pth">6. 甲状旁腺激素（Parathyroid Hormone, PTH，pg/mL）*</label>
                 <input type="number" id="pth" placeholder="如：18.2 | e.g., 18.2" step="any">
-                <div class="error提示" id="pthError">请输入有效数值（≥0）<span class="en">Please enter valid value (≥0)</span></div>
+                <!-- 修复：类名改为error-tip -->
+                <div class="error-tip" id="pthError">请输入有效数值（≥0）<span class="en">Please enter valid value (≥0)</span></div>
                 <div class="note">
                     评分规则：>16.53pg/mL得1分，否则0分（风险因素）| Scoring Rule: 1 point if >16.53pg/mL, 0 points otherwise (Risk Factor)
                 </div>
@@ -608,7 +617,7 @@
             document.getElementById('recordCountEn').textContent = scoreRecords.length;
         }
 
-        // 原生CSV导出功能（无任何外部依赖，100%稳定）| Native CSV Export Function (No Dependencies)
+        // 原生CSV导出功能（修复语法错误，无任何外部依赖，100%稳定）| Native CSV Export Function (No Dependencies)
         function exportRecords() {
             // 1. 验证是否有评分记录
             if (scoreRecords.length === 0) {
@@ -619,47 +628,68 @@
             try {
                 // 2. 生成CSV表头
                 const headers = Object.keys(scoreRecords[0]);
-                // 3. 生成CSV内容（处理中文和特殊字符）
-                const csvContent = [
-                    headers.join(","), // 表头
-                    ...scoreRecords.map(row => headers.map(key => `"${(row[key] || "").replace(/"/g, '""')}"`).join(",")) // 数据行（转义双引号）
-                ].join("\n");
+                // 3. 生成CSV内容（处理中文和特殊字符，修复展开运算符兼容问题）
+                let csvRows = [headers.join(",")]; // 表头行
+                // 替换展开运算符为普通循环，避免语法报错
+                scoreRecords.forEach(function(row) {
+                    const rowData = headers.map(function(key) {
+                        const value = row[key] || "";
+                        // 转义双引号，避免CSV格式错误
+                        return "\"" + value.toString().replace(/"/g, '""') + "\"";
+                    });
+                    csvRows.push(rowData.join(","));
+                });
+                const csvContent = csvRows.join("\n");
 
-                // 4. 创建Blob并下载
-                const blob = new Blob([`\ufeff${csvContent}`], { type: 'text/csv;charset=utf-8;' });
+                // 4. 创建Blob并下载（添加UTF-8 BOM头，解决中文乱码）
+                const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                const today = new Date().toLocaleDateString('zh-CN').replace(/\//g, '-');
-                a.download = `AVF狭窄评分记录_${today}.csv`;
+                // 修复日期格式化，避免特殊字符报错
+                const today = new Date();
+                const dateStr = today.getFullYear() + "-" + (today.getMonth() + 1).toString().padStart(2, "0") + "-" + today.getDate().toString().padStart(2, "0");
+                a.download = "AVF狭窄评分记录_" + dateStr + ".csv";
+                // 确保DOM元素添加完成后再触发点击
                 document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
+                setTimeout(function() {
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 0);
 
                 // 5. 导出成功提示
-                alert(`评分记录已成功导出为CSV文件（可直接用Excel打开）| Score records exported as CSV (open with Excel)`);
+                alert("评分记录已成功导出为CSV文件（可直接用Excel打开）| Score records exported as CSV (open with Excel)");
             } catch (error) {
-                console.error("导出失败：", error);
+                console.error("导出失败详细信息：", error);
                 alert("导出失败，请重试 | Export failed, please try again");
             }
         }
 
-        // 错误提示显示/隐藏函数 | Error prompt show/hide function
+        // 错误提示显示/隐藏函数（修复DOM选择器，对应修改后的类名）| Error prompt show/hide function
         function showError(id) {
-            document.getElementById(id).style.display = 'block';
+            const errorElem = document.getElementById(id);
+            if (errorElem) {
+                errorElem.style.display = 'block';
+            }
         }
 
         function hideError(id) {
-            document.getElementById(id).style.display = 'none';
+            const errorElem = document.getElementById(id);
+            if (errorElem) {
+                errorElem.style.display = 'none';
+            }
         }
 
         // 重置表单函数 | Reset form function
         function resetForm() {
             document.getElementById('scoreForm').reset();
             document.querySelector('.result-section').style.display = 'none';
-            const errors = document.querySelectorAll('.error提示');
-            errors.forEach(error => error.style.display = 'none');
+            // 修复：选择修改后的英文类名
+            const errors = document.querySelectorAll('.error-tip');
+            errors.forEach(function(error) {
+                error.style.display = 'none';
+            });
         }
     </script>
 </body>
