@@ -318,11 +318,17 @@
             <!-- 基本信息 | Basic Information -->
             <div class="form-row">
                 <div class="form-col input-group">
+                    <label for="patientId">患者ID（Patient ID）*</label>
+                    <input type="text" id="patientId" placeholder="请输入患者唯一标识（如：P2024001）| Enter unique ID (e.g., P2024001)">
+                    <div class="error-tip" id="idError">请填写患者ID <span class="en">Please enter patient ID</span></div>
+                </div>
+                <div class="form-col input-group">
                     <label for="patientName">患者姓名（Patient Name）*</label>
                     <input type="text" id="patientName" placeholder="请输入患者姓名（如：张三）| Enter patient name (e.g., Zhang San)">
-                    <!-- 修复：类名改为error-tip -->
                     <div class="error-tip" id="nameError">请填写患者姓名 <span class="en">Please enter patient name</span></div>
                 </div>
+            </div>
+            <div class="form-row">
                 <div class="form-col input-group">
                     <label for="gender">性别（Gender）*</label>
                     <select id="gender">
@@ -330,142 +336,100 @@
                         <option value="男">男（Male）</option>
                         <option value="女">女（Female）</option>
                     </select>
-                    <!-- 修复：类名改为error-tip -->
                     <div class="error-tip" id="genderError">请选择性别 <span class="en">Please select gender</span></div>
+                </div>
+                <div class="form-col input-group">
+                    <label for="age">年龄（Age，岁/y）*</label>
+                    <input type="number" id="age" placeholder="如：55 | e.g., 55" step="any">
+                    <div class="error-tip" id="ageError">请输入有效年龄（18-120岁）<span class="en">Please enter valid age (18-120 years)</span></div>
                 </div>
             </div>
 
             <!-- 风险因素输入 | Risk Factor Input -->
             <div class="input-group">
-                <label for="age">1. 年龄（Age，岁/y）*</label>
-                <input type="number" id="age" placeholder="如：55 | e.g., 55" step="any">
-                <!-- 修复：类名改为error-tip -->
-                <div class="error-tip" id="ageError">请输入有效年龄（1-120岁）<span class="en">Please enter valid age (1-120 years)</span></div>
+                <label for="surgeryCount">1. 手术次数（Surgery Count）*</label>
+                <input type="number" id="surgeryCount" placeholder="如：1 | e.g., 1" min="0" step="1">
+                <div class="error-tip" id="surgeryError">请输入有效次数（≥0的整数）<span class="en">Please enter valid number (integer ≥0)</span></div>
                 <div class="note">
-                    评分规则：>54.72岁得1分，否则0分 | Scoring Rule: 1 point if >54.72 years, 0 points otherwise
+                    评分规则：0次=0分，1次=1分，≥2次=3分（OR=2.08，风险因素）| Scoring Rule: 0 points for 0 times, 1 point for 1 time, 3 points for ≥2 times (OR=2.08, Risk Factor)
                 </div>
                 <details>
                     <summary>查看详细说明 | View Detailed Explanation</summary>
                     <div class="detail-content">
-                        指标定义：患者当前实际年龄（精确到小数点后1位）<br>
-                        <span class="en">Definition: Patient's current actual age (accurate to 1 decimal place)</span><br>
-                        临床意义：年龄是血管功能的重要影响因素，高龄患者血管弹性下降、修复能力减弱，狭窄风险略高<br>
-                        <span class="en">Clinical Significance: Age is an important factor affecting vascular function. Elderly patients have decreased vascular elasticity and impaired repair capacity, leading to a slightly higher risk of stricture</span><br>
-                        评分依据：基于临床数据统计，54.72岁为风险分界点<br>
-                        <span class="en">Scoring Basis: Based on clinical data statistics, 54.72 years is the risk cutoff point</span>
+                        指标定义：患者既往接受的内瘘相关手术次数（含首次造瘘手术）<br>
+                        <span class="en">Definition: Number of previous fistula-related surgeries (including initial fistula creation)</span><br>
+                        临床意义：多次手术通过机械创伤和炎症反应促进新生内膜增生，形成"血管损伤累积"效应，显著升高狭窄风险<br>
+                        <span class="en">Clinical Significance: Multiple surgeries promote neointimal hyperplasia through mechanical trauma and inflammatory responses, forming "vascular injury accumulation" and significantly increasing stricture risk</span><br>
+                        统计依据：每增加1次手术，狭窄风险升高2.08倍（95%CI:1.52-2.84，p<0.0001）<br>
+                        <span class="en">Statistical Basis: Each additional surgery increases stricture risk by 2.08 times (95%CI:1.52-2.84, p<0.0001)</span>
                     </div>
                 </details>
             </div>
 
             <div class="input-group">
-                <label for="fistulaDiameter">2. 瘘口直径（Fistula Diameter，cm）*</label>
-                <input type="number" id="fistulaDiameter" placeholder="如：0.45 | e.g., 0.45" step="0.01">
-                <!-- 修复：类名改为error-tip -->
-                <div class="error-tip" id="diameterError">请输入有效直径（>0且≤2.0cm）<span class="en">Please enter valid diameter (>0 and ≤2.0cm)</span></div>
+                <label for="thrombosis">2. 血栓病史（Thrombosis History）*</label>
+                <select id="thrombosis">
+                    <option value="">请选择 | Please select</option>
+                    <option value="1">有（Yes）</option>
+                    <option value="0">无（No）</option>
+                </select>
+                <div class="error-tip" id="thrombosisError">请选择是否有血栓病史 <span class="en">Please select thrombosis history</span></div>
                 <div class="note">
-                    评分规则：≤0.46cm得1分，否则0分（保护因素）| Scoring Rule: 1 point if ≤0.46cm, 0 points otherwise (Protective Factor)
+                    评分规则：有=1分，无=0分（OR=1.96，风险因素）| Scoring Rule: 1 point for yes, 0 points for no (OR=1.96, Risk Factor)
                 </div>
                 <details>
                     <summary>查看详细说明 | View Detailed Explanation</summary>
                     <div class="detail-content">
-                        指标定义：动静脉内瘘吻合口处的实际测量直径（超声检测值）<br>
-                        <span class="en">Definition: Actual measured diameter at the anastomosis of arteriovenous fistula (ultrasound detection value)</span><br>
-                        临床意义：瘘口直径适中（>0.46cm）时，血流动力学更稳定，狭窄发生率降低<br>
-                        <span class="en">Clinical Significance: When the fistula diameter is moderate (>0.46cm), hemodynamics is more stable, and the incidence of stricture is reduced</span><br>
-                        测量建议：使用超声在吻合口1cm处垂直测量，精确到0.01cm<br>
-                        <span class="en">Measurement Suggestion: Use ultrasound to measure vertically 1cm from the anastomosis, accurate to 0.01cm</span>
+                        指标定义：患者既往是否发生过与AVF相关的血栓形成事件（经超声或血管造影证实）<br>
+                        <span class="en">Definition: Whether the patient has a history of AVF-related thrombosis (confirmed by ultrasound or angiography)</span><br>
+                        临床意义：血栓病史与狭窄风险密切相关，反映血管内皮功能损伤和凝血状态异常<br>
+                        <span class="en">Clinical Significance: Thrombosis history is closely associated with stricture risk, reflecting vascular endothelial injury and abnormal coagulation</span><br>
+                        统计依据：有血栓病史患者的狭窄风险是无血栓病史患者的1.96倍（95%CI:1.08-3.57，p=0.0266）<br>
+                        <span class="en">Statistical Basis: Patients with thrombosis history have 1.96 times higher stricture risk than those without (95%CI:1.08-3.57, p=0.0266)</span>
                     </div>
                 </details>
             </div>
 
             <div class="input-group">
-                <label for="surgeryTimes">3. 手术次数（Surgery Times）*</label>
-                <input type="number" id="surgeryTimes" placeholder="如：1.0 | e.g., 1.0" step="any">
-                <!-- 修复：类名改为error-tip -->
-                <div class="error-tip" id="surgeryError">请输入有效次数（≥0）<span class="en">Please enter valid number (≥0)</span></div>
-                <div class="note">
-                    评分规则：>0.998次得3分，否则0分（风险因素）| Scoring Rule: 3 points if >0.998 times, 0 points otherwise (Risk Factor)
-                </div>
-                <details>
-                    <summary>查看详细说明 | View Detailed Explanation</summary>
-                    <div class="detail-content">
-                        指标定义：患者既往接受的内瘘相关手术次数（含首次手术）<br>
-                        <span class="en">Definition: Number of previous fistula-related surgeries received by the patient (including the first surgery)</span><br>
-                        临床意义：多次手术会增加血管损伤、瘢痕组织形成风险，显著提高狭窄发生率<br>
-                        <span class="en">Clinical Significance: Multiple surgeries increase the risk of vascular injury and scar tissue formation, significantly increasing the incidence of stricture</span><br>
-                        评分依据：手术次数≥1次时，风险显著升高，故赋予3分权重<br>
-                        <span class="en">Scoring Basis: When the number of surgeries ≥1, the risk increases significantly, so a weight of 3 points is assigned</span>
-                    </div>
-                </details>
-            </div>
-
-            <div class="input-group">
-                <label for="noSurgery1y">4. 首次使用1年内未手术治疗（No Surgery Within 1 Year After First Use）*</label>
-                <select id="noSurgery1y">
+                <label for="noSurgeryFirstYear">3. 术后1年未手术（No Surgery First Year）*</label>
+                <select id="noSurgeryFirstYear">
                     <option value="">请选择 | Please select</option>
                     <option value="1">是（Yes）</option>
                     <option value="0">否（No）</option>
                 </select>
-                <!-- 修复：类名改为error-tip -->
-                <div class="error-tip" id="noSurgeryError">请选择是否 <span class="en">Please select yes or no</span></div>
+                <div class="error-tip" id="noSurgeryError">请选择是否术后1年未手术 <span class="en">Please select no surgery within first year</span></div>
                 <div class="note">
-                    评分规则：是得6分，否则0分（保护因素）| Scoring Rule: 6 points for yes, 0 points for no (Protective Factor)
+                    评分规则：是=2分，否=0分（OR=0.42，保护因素）| Scoring Rule: 2 points for yes, 0 points for no (OR=0.42, Protective Factor)
                 </div>
                 <details>
                     <summary>查看详细说明 | View Detailed Explanation</summary>
                     <div class="detail-content">
-                        指标定义：内瘘首次投入使用后，1年内未因狭窄、血栓等并发症接受手术干预<br>
-                        <span class="en">Definition: No surgical intervention for complications such as stricture and thrombosis within 1 year after the first use of the fistula</span><br>
-                        临床意义：1年内无手术史表明内瘘初始功能良好，长期通畅性更优<br>
-                        <span class="en">Clinical Significance: No surgical history within 1 year indicates good initial function of the fistula and better long-term patency</span><br>
-                        评分依据：该指标是保护因素中权重最高项，反映内瘘基础质量<br>
-                        <span class="en">Scoring Basis: This indicator is the highest weighted protective factor, reflecting the basic quality of the fistula</span>
+                        指标定义：AVF首次造瘘术后1年内，未因狭窄、血栓等并发症接受任何手术干预<br>
+                        <span class="en">Definition: No surgical intervention for complications such as stricture or thrombosis within 1 year after initial AVF creation</span><br>
+                        临床意义：术后1年无手术史表明内瘘成熟良好，血管生物学特性优异，长期预后更佳<br>
+                        <span class="en">Clinical Significance: No surgery within 1 year indicates well-matured fistula with favorable vascular biology and better long-term prognosis</span><br>
+                        统计依据：术后1年未手术患者的狭窄风险降低58.5%（95%CI:0.28-0.63，p<0.0001）<br>
+                        <span class="en">Statistical Basis: Patients with no surgery within 1 year have 58.5% lower stricture risk (95%CI:0.28-0.63, p<0.0001)</span>
                     </div>
                 </details>
             </div>
 
             <div class="input-group">
-                <label for="multiDisease">5. 多种基础疾病（≥2种）（Multiple Comorbidities [≥2 Types]）*</label>
-                <select id="multiDisease">
-                    <option value="">请选择 | Please select</option>
-                    <option value="1">是（Yes）</option>
-                    <option value="0">否（No）</option>
-                </select>
-                <!-- 修复：类名改为error-tip -->
-                <div class="error-tip" id="diseaseError">请选择是否 <span class="en">Please select yes or no</span></div>
+                <label for="hemoglobin">4. 血红蛋白浓度（Hemoglobin，g/L）*</label>
+                <input type="number" id="hemoglobin" placeholder="如：95 | e.g., 95" step="any">
+                <div class="error-tip" id="hemoglobinError">请输入有效浓度（60-150g/L）<span class="en">Please enter valid concentration (60-150g/L)</span></div>
                 <div class="note">
-                    评分规则：是得3分，否则0分（风险因素）| Scoring Rule: 3 points for yes, 0 points for no (Risk Factor)
+                    评分规则：≤90g/L=0分，>90g/L=1分（OR=1.01，风险因素）| Scoring Rule: 0 points for ≤90g/L, 1 point for >90g/L (OR=1.01, Risk Factor)
                 </div>
                 <details>
                     <summary>查看详细说明 | View Detailed Explanation</summary>
                     <div class="detail-content">
-                        指标定义：同时患有糖尿病、高血压、冠心病、高脂血症等基础疾病中的2种及以上<br>
-                        <span class="en">Definition: Simultaneously suffering from 2 or more of the following comorbidities: diabetes mellitus, hypertension, coronary heart disease, hyperlipidemia, etc.</span><br>
-                        临床意义：多种基础疾病协同损害血管内皮功能，加速动脉粥样硬化，升高狭窄风险<br>
-                        <span class="en">Clinical Significance: Multiple comorbidities synergistically damage vascular endothelial function, accelerate atherosclerosis, and increase the risk of stricture</span><br>
-                        统计依据：合并2种以上基础疾病患者的狭窄发生率是单一疾病患者的2.3倍<br>
-                        <span class="en">Statistical Basis: The incidence of stricture in patients with ≥2 comorbidities is 2.3 times that of patients with a single disease</span>
-                    </div>
-                </details>
-            </div>
-
-            <div class="input-group">
-                <label for="pth">6. 甲状旁腺激素（Parathyroid Hormone, PTH，pg/mL）*</label>
-                <input type="number" id="pth" placeholder="如：18.2 | e.g., 18.2" step="any">
-                <!-- 修复：类名改为error-tip -->
-                <div class="error-tip" id="pthError">请输入有效数值（≥0）<span class="en">Please enter valid value (≥0)</span></div>
-                <div class="note">
-                    评分规则：>16.53pg/mL得1分，否则0分（风险因素）| Scoring Rule: 1 point if >16.53pg/mL, 0 points otherwise (Risk Factor)
-                </div>
-                <details>
-                    <summary>查看详细说明 | View Detailed Explanation</summary>
-                    <div class="detail-content">
-                        指标定义：血液中甲状旁腺激素的检测值（空腹静脉血检测）<br>
-                        <span class="en">Definition: Detected value of parathyroid hormone in blood (fasting venous blood test)</span><br>
-                        临床意义：PTH升高会导致血管钙化、纤维化，损害内瘘血管壁结构<br>
-                        <span class="en">Clinical Significance: Elevated PTH leads to vascular calcification and fibrosis, damaging the fistula vessel wall structure</span><br>
-                        正常范围：15-65pg/mL，超过16.53pg/mL时狭窄风险开始上升<br>
-                        <span class="en">Normal Range: 15-65pg/mL, the risk of stricture begins to increase when exceeding 16.53pg/mL</span>
+                        指标定义：空腹静脉血检测的血红蛋白浓度（常规实验室检测指标）<br>
+                        <span class="en">Definition: Fasting venous blood hemoglobin concentration (routine laboratory indicator)</span><br>
+                        临床意义：血红蛋白升高可增加血液粘稠度，改变血流动力学，通过调节HIF-1α表达参与狭窄发病机制<br>
+                        <span class="en">Clinical Significance: Elevated hemoglobin increases blood viscosity, alters hemodynamics, and participates in stricture pathogenesis by regulating HIF-1α expression</span><br>
+                        统计依据：血红蛋白每升高1g/L，狭窄风险升高1.01倍（95%CI:1.00-1.02，p=0.0049）<br>
+                        <span class="en">Statistical Basis: Each 1g/L increase in hemoglobin increases stricture risk by 1.01 times (95%CI:1.00-1.02, p=0.0049)</span>
                     </div>
                 </details>
             </div>
@@ -488,12 +452,20 @@
             <div class="result-title">评分结果（Score Result）</div>
             <div class="result-card">
                 <div class="result-item">
+                    <span class="result-label">患者ID <span class="en">Patient ID</span>：</span>
+                    <span class="result-value" id="resultId">-</span>
+                </div>
+                <div class="result-item">
                     <span class="result-label">患者姓名 <span class="en">Patient Name</span>：</span>
                     <span class="result-value" id="resultName">-</span>
                 </div>
                 <div class="result-item">
                     <span class="result-label">性别 <span class="en">Gender</span>：</span>
                     <span class="result-value" id="resultGender">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">年龄 <span class="en">Age</span>：</span>
+                    <span class="result-value" id="resultAge">-</span>
                 </div>
                 <div class="result-item">
                     <span class="result-label">总评分 <span class="en">Total Score</span>：</span>
@@ -524,54 +496,62 @@
         // 评分计算核心函数 | Core score calculation function
         function calculateScore() {
             // 1. 获取输入值 | Get input values
+            const patientId = document.getElementById('patientId').value.trim();
             const patientName = document.getElementById('patientName').value.trim();
             const gender = document.getElementById('gender').value;
             const age = parseFloat(document.getElementById('age').value);
-            const fistulaDiameter = parseFloat(document.getElementById('fistulaDiameter').value);
-            const surgeryTimes = parseFloat(document.getElementById('surgeryTimes').value);
-            const noSurgery1y = parseInt(document.getElementById('noSurgery1y').value);
-            const multiDisease = parseInt(document.getElementById('multiDisease').value);
-            const pth = parseFloat(document.getElementById('pth').value);
+            const surgeryCount = parseInt(document.getElementById('surgeryCount').value);
+            const thrombosis = parseInt(document.getElementById('thrombosis').value);
+            const noSurgeryFirstYear = parseInt(document.getElementById('noSurgeryFirstYear').value);
+            const hemoglobin = parseFloat(document.getElementById('hemoglobin').value);
 
             // 2. 验证输入 | Validate input
             let isValid = true;
+            if (!patientId) { showError('idError'); isValid = false; } else { hideError('idError'); }
             if (!patientName) { showError('nameError'); isValid = false; } else { hideError('nameError'); }
             if (!gender) { showError('genderError'); isValid = false; } else { hideError('genderError'); }
-            if (isNaN(age) || age <= 0 || age > 120) { showError('ageError'); isValid = false; } else { hideError('ageError'); }
-            if (isNaN(fistulaDiameter) || fistulaDiameter <= 0 || fistulaDiameter > 2.0) { showError('diameterError'); isValid = false; } else { hideError('diameterError'); }
-            if (isNaN(surgeryTimes) || surgeryTimes < 0) { showError('surgeryError'); isValid = false; } else { hideError('surgeryError'); }
-            if (isNaN(noSurgery1y)) { showError('noSurgeryError'); isValid = false; } else { hideError('noSurgeryError'); }
-            if (isNaN(multiDisease)) { showError('diseaseError'); isValid = false; } else { hideError('diseaseError'); }
-            if (isNaN(pth) || pth < 0) { showError('pthError'); isValid = false; } else { hideError('pthError'); }
+            if (isNaN(age) || age < 18 || age > 120) { showError('ageError'); isValid = false; } else { hideError('ageError'); }
+            if (isNaN(surgeryCount) || surgeryCount < 0) { showError('surgeryError'); isValid = false; } else { hideError('surgeryError'); }
+            if (isNaN(thrombosis)) { showError('thrombosisError'); isValid = false; } else { hideError('thrombosisError'); }
+            if (isNaN(noSurgeryFirstYear)) { showError('noSurgeryError'); isValid = false; } else { hideError('noSurgeryError'); }
+            if (isNaN(hemoglobin) || hemoglobin < 60 || hemoglobin > 150) { showError('hemoglobinError'); isValid = false; } else { hideError('hemoglobinError'); }
 
             // 3. 验证失败则返回 | Return if validation fails
             if (!isValid) return;
 
             // 4. 计算各项得分 | Calculate scores for each item
             let score = 0;
-            if (age > 54.72) score += 1;
-            if (fistulaDiameter <= 0.46) score += 1;
-            if (surgeryTimes > 0.998) score += 3;
-            if (noSurgery1y === 1) score += 6;
-            if (multiDisease === 1) score += 3;
-            if (pth > 16.53) score += 1;
+            // 年龄评分 | Age scoring
+            if (age < 60) score += 0;
+            else if (age >= 60 && age <= 75) score += 1;
+            else score += 2;
+            // 手术次数评分 | Surgery count scoring
+            if (surgeryCount === 0) score += 0;
+            else if (surgeryCount === 1) score += 1;
+            else score += 3;
+            // 血栓病史评分 | Thrombosis history scoring
+            score += thrombosis === 1 ? 1 : 0;
+            // 术后1年未手术评分 | No surgery first year scoring
+            score += noSurgeryFirstYear === 1 ? 2 : 0;
+            // 血红蛋白评分 | Hemoglobin scoring
+            score += hemoglobin > 90 ? 1 : 0;
 
             // 5. 判定风险等级和狭窄发生率 | Determine risk level and stricture rate
             let riskLevel, riskLevelEn, strictureRate, riskClass;
-            if (score <= 5) {
+            if (score <= 3) {
                 riskLevel = "低危组";
                 riskLevelEn = "Low-Risk Group";
-                strictureRate = "12.0%";
+                strictureRate = "15.7%";
                 riskClass = "low-risk";
-            } else if (score <= 10) {
+            } else if (score >= 4 && score <= 5) {
                 riskLevel = "中危组";
-                riskLevelEn = "Medium-Risk Group";
-                strictureRate = "32.9%";
+                riskLevelEn = "Intermediate-Risk Group";
+                strictureRate = "43.5%";
                 riskClass = "medium-risk";
             } else {
                 riskLevel = "高危组";
                 riskLevelEn = "High-Risk Group";
-                strictureRate = "43.3%";
+                strictureRate = "64.0%";
                 riskClass = "high-risk";
             }
 
@@ -588,25 +568,27 @@
 
             // 7. 显示结果 | Display results
             document.querySelector('.result-section').style.display = 'block';
+            document.getElementById('resultId').textContent = patientId;
             document.getElementById('resultName').textContent = patientName;
             document.getElementById('resultGender').textContent = gender === '男' ? '男（Male）' : '女（Female）';
-            document.getElementById('totalScore').textContent = `${score} 分（满分15分）| ${score} / 15 Points`;
+            document.getElementById('resultAge').textContent = `${age.toFixed(1)} 岁 | ${age.toFixed(1)} years`;
+            document.getElementById('totalScore').textContent = `${score} 分（满分9分）| ${score} / 9 Points`;
             const riskLevelElem = document.getElementById('riskLevel');
             riskLevelElem.textContent = `${riskLevel}（${riskLevelEn}）`;
             riskLevelElem.className = `risk-level ${riskClass}`;
             document.getElementById('strictureRate').textContent = strictureRate;
             document.getElementById('evaluateTime').textContent = `${evaluateTime} | ${evaluateTimeEn}`;
 
-            // 8. 保存记录到数组（中英对照）| Save record to array (Chinese-English对照)
+            // 8. 保存记录到数组（中英对照）| Save record to array (Chinese-English)
             const record = {
+                "患者ID（Patient ID）": patientId,
                 "患者姓名（Patient Name）": patientName,
                 "性别（Gender）": gender === '男' ? '男（Male）' : '女（Female）',
                 "年龄（Age, y）": age.toFixed(1) + " 岁",
-                "瘘口直径（Fistula Diameter, cm）": fistulaDiameter.toFixed(2) + " cm",
-                "手术次数（Surgery Times）": surgeryTimes.toFixed(1) + " 次",
-                "1年内未手术（No Surgery Within 1y）": noSurgery1y === 1 ? "是（Yes）" : "否（No）",
-                "多种基础疾病（Multiple Comorbidities）": multiDisease === 1 ? "是（Yes）" : "否（No）",
-                "PTH值（PTH, pg/mL）": pth.toFixed(1) + " pg/mL",
+                "手术次数（Surgery Count）": surgeryCount + " 次",
+                "血栓病史（Thrombosis History）": thrombosis === 1 ? "有（Yes）" : "无（No）",
+                "术后1年未手术（No Surgery First Year）": noSurgeryFirstYear === 1 ? "是（Yes）" : "否（No）",
+                "血红蛋白浓度（Hemoglobin, g/L）": hemoglobin.toFixed(1) + " g/L",
                 "总评分（Total Score）": score + " 分",
                 "风险等级（Risk Level）": `${riskLevel}（${riskLevelEn}）`,
                 "狭窄发生率（Stricture Rate）": strictureRate,
@@ -617,7 +599,7 @@
             document.getElementById('recordCountEn').textContent = scoreRecords.length;
         }
 
-        // 原生CSV导出功能（修复语法错误，无任何外部依赖，100%稳定）| Native CSV Export Function (No Dependencies)
+        // 原生CSV导出功能（无外部依赖）| Native CSV Export Function (No Dependencies)
         function exportRecords() {
             // 1. 验证是否有评分记录
             if (scoreRecords.length === 0) {
@@ -628,9 +610,8 @@
             try {
                 // 2. 生成CSV表头
                 const headers = Object.keys(scoreRecords[0]);
-                // 3. 生成CSV内容（处理中文和特殊字符，修复展开运算符兼容问题）
-                let csvRows = [headers.join(",")]; // 表头行
-                // 替换展开运算符为普通循环，避免语法报错
+                // 3. 生成CSV内容（处理中文和特殊字符）
+                let csvRows = [headers.join(",")];
                 scoreRecords.forEach(function(row) {
                     const rowData = headers.map(function(key) {
                         const value = row[key] || "";
@@ -646,7 +627,7 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                // 修复日期格式化，避免特殊字符报错
+                // 格式化日期作为文件名
                 const today = new Date();
                 const dateStr = today.getFullYear() + "-" + (today.getMonth() + 1).toString().padStart(2, "0") + "-" + today.getDate().toString().padStart(2, "0");
                 a.download = "AVF狭窄评分记录_" + dateStr + ".csv";
@@ -666,7 +647,7 @@
             }
         }
 
-        // 错误提示显示/隐藏函数（修复DOM选择器，对应修改后的类名）| Error prompt show/hide function
+        // 错误提示显示/隐藏函数 | Error prompt show/hide function
         function showError(id) {
             const errorElem = document.getElementById(id);
             if (errorElem) {
@@ -685,7 +666,6 @@
         function resetForm() {
             document.getElementById('scoreForm').reset();
             document.querySelector('.result-section').style.display = 'none';
-            // 修复：选择修改后的英文类名
             const errors = document.querySelectorAll('.error-tip');
             errors.forEach(function(error) {
                 error.style.display = 'none';
